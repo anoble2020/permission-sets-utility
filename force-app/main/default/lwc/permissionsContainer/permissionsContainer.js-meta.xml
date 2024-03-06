@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<LightningComponentBundle>
+  <apiVersion>59.0</apiVersion>
+  <description>Permissions Utility</description>
+  <isExposed>true</isExposed>
+  <masterLabel>Permissions Utility Tool</masterLabel>
+  <targets>
+    <target>lightning__UtilityBar</target>
+  </targets>
+</LightningComponentBundle>

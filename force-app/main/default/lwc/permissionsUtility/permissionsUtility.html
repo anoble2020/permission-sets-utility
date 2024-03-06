@@ -1,0 +1,128 @@
+<!--<template>
+    <lightning-layout pull-to-boundary="medium" multiple-rows="true">
+        <lightning-layout-item size="6" small-device-size="6" medium-device-size="6" large-device-size="6" padding="horizontal-medium">
+            <lightning-combobox label="Permission Set" placeholder="Select Permission Set" options={permissionSets} variant="standard" dropdown-alignment="left" value={selectedPermissionSet} onchange={handlePermissionSetChange}></lightning-combobox>
+        </lightning-layout-item>
+        <lightning-layout-item size="6" small-device-size="6" medium-device-size="6" large-device-size="6" padding="horizontal-medium">
+            <lightning-combobox label="Object" placeholder="Select Object" options={sObjectOptions} value={selectedSObject} variant="standard" dropdown-alignment="left" onchange={handleSObjectChange}></lightning-combobox>
+        </lightning-layout-item>
+        <lightning-layout-item size="12" small-device-size="12" medium-device-size="12" large-device-size="12" padding="horizontal-medium">
+            <lightning-card title="Permissions" variant="base" icon-name="standard:account">
+                <div class="slds-card__body slds-card__body_inner"></div>
+                <lightning-datatable hide-checkbox-column show-row-number-column="false" class="slds-m-around_medium" key-field="Id" data={sObjectFields} columns={columns}
+                onsave={handleFieldPermissionsUpdate} draft-values={draftValues} resize-column-disabled="true"></lightning-datatable>
+            </lightning-card>
+        </lightning-layout-item>
+    </lightning-layout>
+</template>-->
+
+<template>
+    <div style="height:500px;">
+    <template if:false={permissionSetsLoaded}>
+        <lightning-spinner size="medium"></lightning-spinner>
+    </template>
+    <template if:true={permissionSetsLoaded}>
+    <lightning-layout class="slds-m-around_x-small" pull-to-boundary="medium" multiple-rows="true">
+        <lightning-layout-item size="6" small-device-size="6" medium-device-size="6" large-device-size="6" padding="horizontal-medium">
+            <lightning-combobox label="Permission Set" placeholder="Select Permission Set" options={permissionSets} variant="standard" dropdown-alignment="left" value={selectedPermissionSet} onchange={handlePermissionSetChange}></lightning-combobox>
+        </lightning-layout-item>
+        <lightning-layout-item size="6" small-device-size="6" medium-device-size="6" large-device-size="6" padding="horizontal-medium">
+            <lightning-combobox label="Object" placeholder="Select Object" options={sObjectOptions} value={selectedSObject} variant="standard" dropdown-alignment="left" onchange={handleSObjectChange}></lightning-combobox>
+        </lightning-layout-item>
+        <lightning-layout-item class="slds-m-top_small" size="12" small-device-size="12" medium-device-size="12" large-device-size="12" padding="horizontal-medium">
+            <template if:true={selectedSObject}>
+                <template if:false={objectPermsLoaded}>
+                    <lightning-spinner size="medium"></lightning-spinner>
+                </template>
+
+            <template if:true={objectPermsLoaded}>
+            <lightning-card  title="Object Permissions" icon-name={iconName} variant="base">
+                <div class="slds-card__body slds-card__body_inner">   
+                    <table class="slds-table slds-no-row-hover slds-table_bordered">
+                        <thead>
+                            <tr class="slds-text-title_caps"></tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={objectLevelPerms.permissions} for:item="objPerm">
+                            <tr class="slds-hint-parent" key={objPerm.name}>
+                                <td>
+                                    <div class="slds-text-title slds-text-color_default">{objPerm.label}</div>
+                                </td>
+                                <td>
+                                    <lightning-input type="checkbox" variant="label-hidden" checked={objPerm.value} onchange={handleCheckboxChange} data-type="object" data-permission={objPerm.name}></lightning-input>
+                                </td>
+                            </tr>
+                        </template>
+                        </tbody>
+                    </table>
+                </div>
+            </lightning-card>
+
+            <lightning-card  title="Field Permissions" icon-name={iconName} variant="base">
+                <div slot="actions">
+                    <lightning-input type="search" value={searchValue} variant="label-hidden" date-style="medium" placeholder="Search by Field Name" onchange={handleSearchChange}></lightning-input>
+                </div>
+                <div class="slds-card__body slds-card__body_inner">
+                    <table class="slds-table slds-no-row-hover slds-table_bordered">
+                        <thead>
+                            <tr class="slds-text-title_caps"></tr>
+                        </thead>
+                        <tbody>
+                            <tr class="slds-hint-parent">
+                                <td>
+                                    <span style="font-size: 0.8125rem;"><b>Field Name</b></span>
+                                </td>
+                                <td>
+                                    <lightning-layout multiple-rows="false">
+                                        <lightning-layout-item>
+                                            <lightning-input type="checkbox" variant="label-hidden"></lightning-input>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item>
+                                            <span style="font-size: 0.8125rem;"><b>Read</b></span>
+                                        </lightning-layout-item>
+                                    </lightning-layout>
+                                </td>
+                                <td>
+                                    <lightning-layout multiple-rows="false">
+                                        <lightning-layout-item>
+                                            <lightning-input type="checkbox" variant="label-hidden"></lightning-input>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item>
+                                            <span style="font-size: 0.8125rem;"><b>Edit</b></span>
+                                        </lightning-layout-item>
+                                    </lightning-layout>
+                                </td>
+                            </tr>
+                            <template for:each={filteredSObjectFields} for:item="field">
+                                <tr class="slds-hint-parent" key={field.Id}>
+                                    <td>
+                                        <div class="slds-text-title slds-text-color_default">{field.Label}</div>
+                                    </td>
+                                    <td>
+                                        <lightning-input data-field-name={field.Id} name="read" disabled={field.Disabled} type="checkbox" checked={field.PermissionsRead} variant="label-hidden" onchange={handleCheckboxChange} data-type="field"></lightning-input>
+                                    </td>
+                                    <td>
+                                        <lightning-input data-field-name={field.Id} name="edit" disabled={field.Disabled} type="checkbox" checked={field.PermissionsEdit} variant="label-hidden" onchange={handleCheckboxChange} data-type="field"></lightning-input>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </lightning-card>
+            </template>
+        </template>
+        </lightning-layout-item>
+        <template if:true={showButtons}>
+            <div class="slds-align_absolute-center slds-m-top_x-small slds-p-around_small" style="position:sticky;bottom:0;background-color:white;">
+
+            <lightning-layout-item size="12" small-device-size="12" medium-device-size="12" large-device-size="12">
+                <lightning-button  label="Save" variant="brand" icon-position="left" type="button" onclick={handleSave}></lightning-button>
+                <lightning-button class="slds-m-left_small" label="Cancel" icon-position="left" type="button" onclick={handleCancel}></lightning-button>
+            </lightning-layout-item>
+        </div>
+        </template>
+    </lightning-layout>
+</template>
+</div>
+</template>

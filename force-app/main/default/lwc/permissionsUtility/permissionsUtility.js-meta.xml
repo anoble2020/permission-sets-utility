@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<LightningComponentBundle>
+  <apiVersion>57.0</apiVersion>
+  <description>Permissions Utility</description>
+  <isExposed>false</isExposed>
+  <masterLabel>Permissions Utility</masterLabel>
+</LightningComponentBundle>

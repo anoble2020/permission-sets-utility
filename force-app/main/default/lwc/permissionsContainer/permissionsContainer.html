@@ -1,0 +1,13 @@
+<template>
+    <lightning-layout pull-to-boundary="medium" multiple-rows="true">
+        <lightning-layout-item size="6" small-device-size="6" medium-device-size="6" large-device-size="6" padding="horizontal-medium">
+            <lightning-combobox label="Permission Set" placeholder="Select Permission Set" options={permissionSets} variant="standard" dropdown-alignment="left" value={selectedPermissionSet} onchange={handlePermissionSetChange}></lightning-combobox>
+        </lightning-layout-item>
+        <lightning-layout-item size="6" small-device-size="6" medium-device-size="6" large-device-size="6" padding="horizontal-medium">
+            <lightning-combobox label="Object" placeholder="Select Object" options={sObjectOptions} value={selectedSObject} variant="standard" dropdown-alignment="left" onchange={handleSObjectChange}></lightning-combobox>
+        </lightning-layout-item>
+        <lightning-layout-item size="12" small-device-size="12" medium-device-size="12" large-device-size="12" padding="horizontal-medium">
+            <c-permissions-utility selected-permission-set={selectedPermissionSet} selected-object={selectedSObject}></c-permissions-utility>
+        </lightning-layout-item>
+    </lightning-layout>
+</template>
